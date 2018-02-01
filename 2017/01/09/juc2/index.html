@@ -89,17 +89,17 @@
 
 
 
-<meta name="description" content="当我们写一个单线程程序时，总以为计算机会一行行地运行代码，然而事实并非如此。">
+<meta name="description" content="当我们写一个单线程程序时，总以为计算机会一行行地运行代码，然而事实并非如此。重排序分为：编译器重排序 和 处理器重排序……">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java并发编程的艺术（二）——重排序">
 <meta property="og:url" content="http://yoursite.com/2017/01/09/juc2/index.html">
 <meta property="og:site_name" content="大闲人柴毛毛">
-<meta property="og:description" content="当我们写一个单线程程序时，总以为计算机会一行行地运行代码，然而事实并非如此。">
+<meta property="og:description" content="当我们写一个单线程程序时，总以为计算机会一行行地运行代码，然而事实并非如此。重排序分为：编译器重排序 和 处理器重排序……">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-02-01T05:33:51.000Z">
+<meta property="og:updated_time" content="2018-02-01T11:47:34.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java并发编程的艺术（二）——重排序">
-<meta name="twitter:description" content="当我们写一个单线程程序时，总以为计算机会一行行地运行代码，然而事实并非如此。">
+<meta name="twitter:description" content="当我们写一个单线程程序时，总以为计算机会一行行地运行代码，然而事实并非如此。重排序分为：编译器重排序 和 处理器重排序……">
 
 
 
@@ -396,7 +396,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  373 字
+                  391 字
                 </span>
               
 
@@ -434,7 +434,7 @@
 
       
         <blockquote>
-<p>当我们写一个单线程程序时，总以为计算机会一行行地运行代码，然而事实并非如此。</p>
+<p>当我们写一个单线程程序时，总以为计算机会一行行地运行代码，然而事实并非如此。<br>重排序分为：编译器重排序 和 处理器重排序……</p>
 </blockquote>
 <a id="more"></a>
 <h1 id="什么是重排序？"><a href="#什么是重排序？" class="headerlink" title="什么是重排序？"></a>什么是重排序？</h1><p>重排序指的是编译器、处理器在不改变程序执行结果的前提下，重新排列指令的执行顺序，以达到最佳的运行效率。</p>
@@ -746,15 +746,10 @@
     </span>
   </div>
 
-  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
 
 
 
-  <span class="post-meta-divider">|</span>
 
-
-
-  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
 
 
 
