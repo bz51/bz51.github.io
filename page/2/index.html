@@ -90,7 +90,7 @@
 <meta name="description" content="大闲人柴毛毛的博客">
 <meta property="og:type" content="website">
 <meta property="og:title" content="大闲人柴毛毛">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta property="og:url" content="http://yoursite.com/page/2/index.html">
 <meta property="og:site_name" content="大闲人柴毛毛">
 <meta property="og:description" content="大闲人柴毛毛的博客">
 <meta property="og:locale" content="zh-Hans">
@@ -126,7 +126,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/page/2/"/>
 
 
 
@@ -300,7 +300,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/31/SpringBoot+Dubbo+Docker+Jenkins/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/01/14/juc7/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="柴毛毛">
@@ -319,7 +319,7 @@
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/01/31/SpringBoot+Dubbo+Docker+Jenkins/" itemprop="url">手把手教你搭建一套可自动化构建的微服务框架</a></h2>
+                <a class="post-title-link" href="/2017/01/14/juc7/" itemprop="url">Java并发编程的艺术(七)——Executors</a></h2>
         
 
         <div class="post-meta">
@@ -331,375 +331,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-31T09:38:54+08:00">
-                2018-01-31
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/微服务/" itemprop="url" rel="index">
-                    <span itemprop="name">微服务</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  10,535 字
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  40 分钟
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h3 id="本文你将学到什么？"><a href="#本文你将学到什么？" class="headerlink" title="本文你将学到什么？"></a>本文你将学到什么？</h3><p>本文将以原理+实战的方式，首先对“微服务”相关的概念进行知识点扫盲，然后开始手把手教你搭建这一整套的微服务系统。</p>
-<h3 id="这套微服务框架能干啥？"><a href="#这套微服务框架能干啥？" class="headerlink" title="这套微服务框架能干啥？"></a>这套微服务框架能干啥？</h3><p>这套系统搭建完之后，那可就厉害了：</p>
-<ul>
-<li><p>微服务架构<br>你的整个应用程序将会被拆分成一个个功能独立的子系统，独立运行，系统与系统之间通过RPC接口通信。这样这些系统之间的耦合度大大降低，你的系统将非常容易扩展，团队协作效率提升了N个档次。这种架构通过眼下流行的SpringBoot和阿里巴巴吊炸天的Dubbo框架来实现。</p>
-</li>
-<li><p>容器化部署<br>你的各个微服务将采用目前处于浪潮之巅的Docker来实现容器化部署，避免一切因环境引起的各种问题，让你们团队的全部精力集中在业务开发上。</p>
-</li>
-<li><p>自动化构建<br>项目被微服务化后，各个服务之间的关系错中复杂，打包构建的工作量相当可怕。不过没关系，本文将借助Jenkins，帮助你一键自动化部署，从此你便告别了加班。</p>
-</li>
-</ul>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/01/31/SpringBoot+Dubbo+Docker+Jenkins/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/30/design-pattern/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="柴毛毛">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="大闲人柴毛毛">
-    </span>
-
-    
-      <header class="post-header" style="border-bottom: 2px #ccc dashed;margin-bottom: 20px;">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/01/30/design-pattern/" itemprop="url">柴毛毛大话设计模式——开发常用设计模式全面解析</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-30T20:38:47+08:00">
-                2018-01-30
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/设计模式/" itemprop="url" rel="index">
-                    <span itemprop="name">设计模式</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  8,586 字
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  32 分钟
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <ul>
-<li>本文是笔者的一点经验总结，主要介绍几种在Web开发中使用频率较高的设计模式。</li>
-<li>本文篇幅较长，建议各位同学挑选感兴趣的设计模式阅读。</li>
-<li><strong>如需转载，请与我联系！</strong></li>
-</ul>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/01/30/design-pattern/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/28/juc13/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="柴毛毛">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="大闲人柴毛毛">
-    </span>
-
-    
-      <header class="post-header" style="border-bottom: 2px #ccc dashed;margin-bottom: 20px;">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/02/28/juc13/" itemprop="url">Java并发编程的艺术(十三)——锁优化</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-28T15:03:32+08:00">
-                2017-02-28
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-14T20:15:19+08:00">
+                2017-01-14
               </time>
             
 
@@ -752,7 +385,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,224 字
+                  2,273 字
                 </span>
               
 
@@ -768,7 +401,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  4 分钟
+                  8 分钟
                 </span>
               
             </div>
@@ -791,11 +424,11 @@
       
         
           <blockquote>
-<p>JDK1.6 对synchronized作了一系列优化，使得同步锁的性能有了很大的提升。本文分别介绍几种锁优化的方式。</p>
+<p>Executor框架便是Java 5中引入的，其内部使用了线程池机制，它在java.util.cocurrent 包下，通过该框架来控制线程的启动、执行和关闭，可以简化并发编程的操作。因此，在Java 5之后，通过Executor来启动线程比使用Thread的start方法更好，除了更易管理，效率更好（用线程池实现，节约开销）外，还有关键的一点：有助于避免this逸出。</p>
 </blockquote>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/02/28/juc13/#more" rel="contents">
+            <a class="btn" href="/2017/01/14/juc7/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -846,7 +479,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/27/juc12/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/01/14/juc6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="柴毛毛">
@@ -865,7 +498,7 @@
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/02/27/juc12/" itemprop="url">Java并发编程的艺术(十二)——线程安全</a></h2>
+                <a class="post-title-link" href="/2017/01/14/juc6/" itemprop="url">Java并发编程的艺术(六)——线程间的通信</a></h2>
         
 
         <div class="post-meta">
@@ -877,8 +510,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-27T23:14:44+08:00">
-                2017-02-27
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-14T11:41:17+08:00">
+                2017-01-14
               </time>
             
 
@@ -931,7 +564,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  56 字
+                  2,024 字
                 </span>
               
 
@@ -947,7 +580,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  1 分钟
+                  8 分钟
                 </span>
               
             </div>
@@ -969,67 +602,16 @@
 
       
         
-          
-            <blockquote>
-<p>如果一个对象构造完成后，调用者无需额外的操作，就可以在多线程环境下随意地使用，并且不发生错误，那么这个对象就是线程安全的。</p>
+          <blockquote>
+<p>多条线程之间有时需要数据交互，下面介绍五种线程间数据交互的方式，他们的使用场景各有不同。</p>
 </blockquote>
-<!--more->
-
-## 1. 什么是『线程安全』？
-如果一个对象构造完成后，调用者无需额外的操作，就可以在多线程环境下随意地使用，并且不发生错误，那么这个对象就是线程安全的。
-
-## 2. 线程安全的几种程度
-**线程安全性的前提：**对『线程安全性』的讨论必须建立在对象内部存在共享变量这一前提，若对象在多条线程间没有共享数据，那这个对象一定是线程安全的！
-
-### 2.1. 绝对的线程安全
-上述线程安全性的定义即为绝对线程安全的情况，即：一个对象在构造完之后，调用者无需任何额外的操作，就可以在多线程环境下随意使用。
-绝对的线程安全是一种理想的状态，若要达到这一状态，往往需要付出巨大的代价。
-通常并不需要达到绝对的线程安全。
-
-### 2.2. 相对的线程安全
-我们通常所说的『线程安全』即为『相对的线程安全』，JDK中标注为线程安全的类通常就是『相对的线程安全』，如：Vector、HashTable、Collections.synchronizedXXX。
-对于相对线程安全的类，使用它们时一般不需要使用额外的保障措施，但对于一些特定的使用场景，仍然需要额外的操作来保证线程安全，如：
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 读线程</span></span><br><span class="line">Thread t1 = <span class="keyword">new</span> Thread( <span class="keyword">new</span> Runnable()&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;vector.size(); i++)&#123;</span><br><span class="line">            System.out.println( vector.get(i) );</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;).start();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 写线程</span></span><br><span class="line">Thread t2 = <span class="keyword">new</span> Thread( <span class="keyword">new</span> Runnable()&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;vector.size(); i++)&#123;</span><br><span class="line">            vector.remove(i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;).start();</span><br></pre></td></tr></table></figure>
-<p>vector是一个线程安全的容器，它所提供的方法均为同步方法，但上述代码仍然会出现线程安全性问题：<br>若线程1读了一半的元素后暂停，线程2开始执行，并删除了所有的元素，然后线程1继续执行，此时发生角标越界异常！<br>修改方案：加上额外的同步<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 读线程</span></span><br><span class="line">Thread t1 = <span class="keyword">new</span> Thread( <span class="keyword">new</span> Runnable()&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span>( vector )&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;vector.size(); i++)&#123;</span><br><span class="line">                System.out.println( vector.get(i) );</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;).start();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 写线程</span></span><br><span class="line">Thread t2 = <span class="keyword">new</span> Thread( <span class="keyword">new</span> Runnable()&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span>( vector )&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;vector.size(); i++)&#123;</span><br><span class="line">                vector.remove(i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;).start();</span><br></pre></td></tr></table></figure></p>
-<h3 id="2-3-线程对立"><a href="#2-3-线程对立" class="headerlink" title="2.3. 线程对立"></a>2.3. 线程对立</h3><p>线程对立指的是：不论调用者采用何种同步措施，都无法达到线程安全的目的。<br>如Thread类的suspend、resume方法就是线程对立的方法。<br>suspend方法会暂停线程，但它不会释放资源，若resume需要请求到该资源才会被运行的话，系统就会进入死锁状态。</p>
-<h2 id="3-实现线程安全的方法"><a href="#3-实现线程安全的方法" class="headerlink" title="3. 实现线程安全的方法"></a>3. 实现线程安全的方法</h2><h3 id="3-1-互斥同步"><a href="#3-1-互斥同步" class="headerlink" title="3.1. 互斥同步"></a>3.1. 互斥同步</h3><p>同步指的是同一时刻，只有一条线程操作『共享变量』。</p>
-<p>实现同步的方式有很多：互斥访问、CAS操作。<br>互斥会引起阻塞，当一条线程请求一个已经被另一线程使用的锁时，就会进入阻塞态；而进入阻塞态会涉及上下文切换。因此，使用互斥来实现同步的开销是很大的。</p>
-<p>互斥同步(阻塞式同步)是一种『悲观锁』，即它认为总是存在多条线程竞争资源的情况，因此它不管当前是不是真的有多条线程在竞争共享资源，它总是先上锁，然后再处理。</p>
-<p>Java中有两种实现互斥同步的方式：synchronized和ReentrantLock。</p>
-<ol>
-<li>synchronized<ul>
-<li>编译器会在synchronized同步块的开始和结束位置加上monitorenter和monitorexit指令；</li>
-<li>这两个指令需要一个reference类型的参数来指名要锁定和解锁的对象；</li>
-<li>若同步块没有明确指定锁对象，那么就使用当前对象或当前类的Class对象；</li>
-<li>它是一把可重入的锁，即：当前线程在已经获得锁的情况下，可以再次获取该锁，因此不会出现当前线程把自己锁死的情况；</li>
-</ul>
-</li>
-<li>ReentrantLock<br> 它也是一把可重入的锁，但比synchronized多如下功能：<ul>
-<li>等待可中断：若一条线程长时间占用锁不释放，那被阻塞的线程可以选择放弃等待，而去做别的事；这对于要处理长时间的同步块时是很有帮助的。</li>
-<li>可实现公平锁：synchronized是一种非公平锁，即：被阻塞的线程竞争锁是随机的；而公平锁是根据被阻塞线程先来后到的顺序给予锁。ReentrantLock默认是非公平锁，可以通过构造函数构造公平锁。</li>
-<li>可以绑定多个条件：synchronized可使用wait/notify来实现等待/通知机制，但一个synchronized同步块只能使用一次，若要使用多次，就需要嵌套同步块；但ReentrantLock可以通过newCondition创建多个条件。</li>
-</ul>
-</li>
-</ol>
-<p>synchronized和ReentrantLock如何选择？<br>优先选择synchronized！<br>JDK1.6已经对synchronized做了很多优化，性能与ReentrantLock相差不大。在条件允许的请况下应优先选择synchronized。</p>
-<h3 id="3-2-非阻塞同步"><a href="#3-2-非阻塞同步" class="headerlink" title="3.2. 非阻塞同步"></a>3.2. 非阻塞同步</h3><p>它是一种『乐观锁』，即它总是认为当前没有线程使用共享资源，因此它不管当前的状态，直接操作共享资源，若发现产生了冲突，那么再采取补偿措施（如：CAS的补偿措施就是不断尝试，直到不发生冲突为止），这种方式线程无需进入阻塞态(挂起态)，因此称为『非阻塞同步』。</p>
-<p>JUC中各种整形原子类的自增、自减等操作就使用了CAS。</p>
-<p>CAS操作过程：CAS操作存在3个值：共享变量V、预期的旧值A、新值B，若V与A相同，则将V更新成B，否则就不更新，继续循环比较，直到更新完成为止。</p>
-<p>CAS操作可能引发的问题：ABA问题。<br>若V一开始的值为A，但在准备赋新值的过程中A变成了B，又变成了A，而CAS操作误认为V没有被改过。</p>
-<h3 id="无同步方案"><a href="#无同步方案" class="headerlink" title="无同步方案"></a>无同步方案</h3><p>『阻塞式同步』和『非阻塞式同步』都是同一时刻只让一条线程处理共享数据，而下面的方案使得多条线程之间不存在共享数据，从而无需同步。</p>
-<ol>
-<li><p>可重入代码<br>如果一块代码段只要输入的值一样其结果就一样的话，这段代码就叫『可重入代码』。<br>这一类代码天生具有线程安全性，线程随意切换结果都一样。</p>
-</li>
-<li><p>线程封闭<br>线程封闭：把所有涉及共享变量操作的任务都放在一个线程中运行。<br>这样就不存在多条线程同时处理共享变量了，从而达到了线程安全目的。</p>
-</li>
-</ol>
-<p>WEB服务器采用的就是这种方式，它把每个请求封装在一条线程中处理，从而不存在线程安全性问题。</p>
-<ol>
-<li>不可变对象<br>如果是共享的基本数据类型变量，只要被final修饰，它就是不可变的；<br>如果是共享的对象，那就要确保它内部的共享成员变量不会被它的行为所改变。<br>PS：保证对象内部共享变量不会被改变的方法有很多，最简单粗暴的方式就是将所有共享变量用final修饰。</li>
-</ol>
-<p>不可变对象一定是线程安全的。</p>
--->
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/01/14/juc6/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1076,7 +658,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/24/juc11/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/01/10/juc5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="柴毛毛">
@@ -1095,7 +677,7 @@
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/02/24/juc11/" itemprop="url">Java并发编程的艺术(十一)——线程池(2)</a></h2>
+                <a class="post-title-link" href="/2017/01/10/juc5/" itemprop="url">Java并发编程的艺术(五)——中断</a></h2>
         
 
         <div class="post-meta">
@@ -1107,8 +689,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-24T12:55:09+08:00">
-                2017-02-24
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-10T14:31:15+08:00">
+                2017-01-10
               </time>
             
 
@@ -1161,7 +743,186 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  810 字
+                  1,624 字
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  6 分钟
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <blockquote>
+<p>在Java中没有办法立即停止一条线程，然而停止线程却显得尤为重要，如取消一个耗时操作。因此，Java提供了一种用于停止线程的机制——中断。</p>
+</blockquote>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/01/10/juc5/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/01/10/juc4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="柴毛毛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大闲人柴毛毛">
+    </span>
+
+    
+      <header class="post-header" style="border-bottom: 2px #ccc dashed;margin-bottom: 20px;">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/01/10/juc4/" itemprop="url">Java并发编程的艺术(四)——线程的状态</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-10T09:35:42+08:00">
+                2017-01-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java并发编程/" itemprop="url" rel="index">
+                    <span itemprop="name">Java并发编程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  942 字
                 </span>
               
 
@@ -1200,11 +961,11 @@
       
         
           <blockquote>
-<p>在HotSpot虚拟机中，Java中的线程将会被一一映射为操作系统的线程。<br>在Java虚拟机层面，用户将多个任务提交给Executor框架，Executor负责分配线程执行它们；<br>在操作系统层面，操作系统再将这些线程分配给处理器执行。</p>
+<p>线程一共拥有六种状态，本文分别介绍这六种状态以及状态间的转化。</p>
 </blockquote>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/02/24/juc11/#more" rel="contents">
+            <a class="btn" href="/2017/01/10/juc4/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1255,7 +1016,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/11/networks/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/01/09/juc3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="柴毛毛">
@@ -1274,7 +1035,7 @@
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/02/11/networks/" itemprop="url">面试必考的计算机网络知识点梳理</a></h2>
+                <a class="post-title-link" href="/2017/01/09/juc3/" itemprop="url">Java并发编程的艺术(三)——volatile</a></h2>
         
 
         <div class="post-meta">
@@ -1286,8 +1047,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-11T15:48:29+08:00">
-                2017-02-11
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-09T16:52:56+08:00">
+                2017-01-09
               </time>
             
 
@@ -1309,8 +1070,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/计算机网络/" itemprop="url" rel="index">
-                    <span itemprop="name">计算机网络</span>
+                  <a href="/categories/Java并发编程/" itemprop="url" rel="index">
+                    <span itemprop="name">Java并发编程</span>
                   </a>
                 </span>
 
@@ -1340,7 +1101,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  6,896 字
+                  2,242 字
                 </span>
               
 
@@ -1356,7 +1117,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  24 分钟
+                  8 分钟
                 </span>
               
             </div>
@@ -1378,10 +1139,12 @@
 
       
         
-          <p>如今互联网大厂都注重程序员的基本功，而计算机网络又是基本功中的一项重要技能。本文从面试角度出发，把计算机网络这本书读薄，挑选最核心、最常考的计算机网络知识点与大家分享，并究其原理。</p>
+          <blockquote>
+<p>并发是让多个线程同时执行，若线程之间是独立的，那并发实现起来很简单，各自执行各自的就行；但往往多条线程之间需要共享数据，此时在并发编程过程中就不可避免要考虑两个问题：通信 与 同步。</p>
+</blockquote>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/02/11/networks/#more" rel="contents">
+            <a class="btn" href="/2017/01/09/juc3/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1432,7 +1195,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/10/jvm10/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/01/09/juc2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="柴毛毛">
@@ -1451,7 +1214,7 @@
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/02/10/jvm10/" itemprop="url">深入理解JVM(十)——类加载器</a></h2>
+                <a class="post-title-link" href="/2017/01/09/juc2/" itemprop="url">Java并发编程的艺术（二）——重排序</a></h2>
         
 
         <div class="post-meta">
@@ -1463,8 +1226,370 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-10T17:07:13+08:00">
-                2017-02-10
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-09T08:09:43+08:00">
+                2017-01-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java并发编程/" itemprop="url" rel="index">
+                    <span itemprop="name">Java并发编程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  373 字
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  1 分钟
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <blockquote>
+<p>当我们写一个单线程程序时，总以为计算机会一行行地运行代码，然而事实并非如此。</p>
+</blockquote>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/01/09/juc2/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/01/08/juc1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="柴毛毛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大闲人柴毛毛">
+    </span>
+
+    
+      <header class="post-header" style="border-bottom: 2px #ccc dashed;margin-bottom: 20px;">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/01/08/juc1/" itemprop="url">Java并发编程的艺术(一)——并发编程需要注意的问题</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-08T12:39:44+08:00">
+                2017-01-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java并发编程/" itemprop="url" rel="index">
+                    <span itemprop="name">Java并发编程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,934 字
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  7 分钟
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>并发是为了提升程序的执行速度，但并不是多线程一定比单线程高效，而且并发编程容易出错。若要实现正确且高效的并发，就要在开发过程中时刻注意以下三个问题：</p>
+<ul>
+<li>上下文切换</li>
+<li>死锁</li>
+<li>资源限制</li>
+</ul>
+<p>接下来会逐一分析这三个问题，并给出相应的解决方案。</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/01/08/juc1/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/04/26/jvm9/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="柴毛毛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大闲人柴毛毛">
+    </span>
+
+    
+      <header class="post-header" style="border-bottom: 2px #ccc dashed;margin-bottom: 20px;">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2016/04/26/jvm9/" itemprop="url">深入理解JVM(九)——类加载的过程</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-04-26T22:21:22+08:00">
+                2016-04-26
               </time>
             
 
@@ -1517,7 +1642,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  483 字
+                  2,462 字
                 </span>
               
 
@@ -1533,7 +1658,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  2 分钟
+                  9 分钟
                 </span>
               
             </div>
@@ -1556,11 +1681,11 @@
       
         
           <blockquote>
-<p>类加载器将class文件加载进JVM的方法区，并在方法区中创建一个java.lang.Class对象作为外界访问这个类的接口。</p>
+<p>通过之前的介绍可知，类加载过程共有5个步骤，分别是：加载、验证、准备、解析、初始化。其中，验证、准备、解析称为连接。下面详细介绍这5个过程JVM所做的工作。</p>
 </blockquote>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/02/10/jvm10/#more" rel="contents">
+            <a class="btn" href="/2016/04/26/jvm9/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1611,7 +1736,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/01/17/juc10/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/04/26/jvm8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="柴毛毛">
@@ -1630,7 +1755,7 @@
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/01/17/juc10/" itemprop="url">Java并发编程的艺术(十)——线程池(1)</a></h2>
+                <a class="post-title-link" href="/2016/04/26/jvm8/" itemprop="url">深入理解JVM(八)——类加载的时机</a></h2>
         
 
         <div class="post-meta">
@@ -1642,8 +1767,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-17T10:22:52+08:00">
-                2017-01-17
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-04-26T16:12:45+08:00">
+                2016-04-26
               </time>
             
 
@@ -1665,8 +1790,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java并发编程/" itemprop="url" rel="index">
-                    <span itemprop="name">Java并发编程</span>
+                  <a href="/categories/JVM/" itemprop="url" rel="index">
+                    <span itemprop="name">JVM</span>
                   </a>
                 </span>
 
@@ -1696,7 +1821,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,500 字
+                  1,631 字
                 </span>
               
 
@@ -1712,7 +1837,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  5 分钟
+                  6 分钟
                 </span>
               
             </div>
@@ -1735,11 +1860,11 @@
       
         
           <blockquote>
-<p>本文首先介绍线程池的组成结构，然后介绍JDK提供的线程池的使用方式。</p>
+<p>C/C++在运行前需要完成预处理、编译、汇编、链接；而在Java中，类加载(加载、连接、初始化)是在程序运行期间完成的。<br>在程序运行期间进行类加载会稍微增加程序的开销，但随之会带来更大的好处——提高程序的灵活性。Java语言的灵活性体现在它可以在运行期间<strong>动态扩展</strong>，所谓动态扩展就是在运行期间<strong>动态加载</strong>和<strong>动态连接</strong>。</p>
 </blockquote>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/01/17/juc10/#more" rel="contents">
+            <a class="btn" href="/2016/04/26/jvm8/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1790,7 +1915,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/01/17/juc9/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/04/25/jvm7/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="柴毛毛">
@@ -1809,7 +1934,7 @@
         
           <h2 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/01/17/juc9/" itemprop="url">Java并发编程的艺术(九)——批量获取多条线程的执行结果</a></h2>
+                <a class="post-title-link" href="/2016/04/25/jvm7/" itemprop="url">深入理解JVM(七)——Class文件结构</a></h2>
         
 
         <div class="post-meta">
@@ -1821,8 +1946,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-17T10:22:52+08:00">
-                2017-01-17
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-04-25T20:18:31+08:00">
+                2016-04-25
               </time>
             
 
@@ -1844,8 +1969,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java并发编程/" itemprop="url" rel="index">
-                    <span itemprop="name">Java并发编程</span>
+                  <a href="/categories/JVM/" itemprop="url" rel="index">
+                    <span itemprop="name">JVM</span>
                   </a>
                 </span>
 
@@ -1875,7 +2000,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  936 字
+                  3,011 字
                 </span>
               
 
@@ -1891,7 +2016,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  4 分钟
+                  11 分钟
                 </span>
               
             </div>
@@ -1914,190 +2039,11 @@
       
         
           <blockquote>
-<p>当向线程池提交callable任务后，我们可能需要一次性获取所有返回结果，有三种处理方法。</p>
+<p>Java具有平台无关性，也就是任何操作系统都能运行Java代码。之所以能实现这一点，是因为Java运行在虚拟机之上，不同的操作系统都拥有各自的Java虚拟机，因此Java能实现“一次编写，处处运行”。</p>
 </blockquote>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/01/17/juc9/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/01/17/juc8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="柴毛毛">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="大闲人柴毛毛">
-    </span>
-
-    
-      <header class="post-header" style="border-bottom: 2px #ccc dashed;margin-bottom: 20px;">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/01/17/juc8/" itemprop="url">Java并发编程的艺术(八)——闭锁、同步屏障、信号量</a></h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-17T09:22:04+08:00">
-                2017-01-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java并发编程/" itemprop="url" rel="index">
-                    <span itemprop="name">Java并发编程</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">字数统计&#58;</span>
-                
-                <span title="字数统计">
-                  738 字
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
-                
-                <span title="阅读时长">
-                  3 分钟
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <blockquote>
-<p>本文分别介绍Java中闭锁、同步屏障、信号量的使用场景和使用方式。</p>
-</blockquote>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/01/17/juc8/#more" rel="contents">
+            <a class="btn" href="/2016/04/25/jvm7/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -2139,7 +2085,7 @@
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 

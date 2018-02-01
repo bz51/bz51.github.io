@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/logo.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/logo.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.png?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hello" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="C/C++在运行前需要完成预处理、编译、汇编、链接；而在Java中，类加载(加载、连接、初始化)是在程序运行期间完成的。在程序运行期间进行类加载会稍微增加程序的开销，但随之会带来更大的好处——提高程序的灵活性。Java语言的灵活性体现在它可以在运行期间动态扩展，所谓动态扩展就是在运行期间动态加载和动态连接。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解JVM(八)——类加载的时机">
+<meta property="og:url" content="http://yoursite.com/2016/04/26/jvm8/index.html">
+<meta property="og:site_name" content="大闲人柴毛毛">
+<meta property="og:description" content="C/C++在运行前需要完成预处理、编译、汇编、链接；而在Java中，类加载(加载、连接、初始化)是在程序运行期间完成的。在程序运行期间进行类加载会稍微增加程序的开销，但随之会带来更大的好处——提高程序的灵活性。Java语言的灵活性体现在它可以在运行期间动态扩展，所谓动态扩展就是在运行期间动态加载和动态连接。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-02-01T05:17:56.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入理解JVM(八)——类加载的时机">
+<meta name="twitter:description" content="C/C++在运行前需要完成预处理、编译、汇编、链接；而在Java中，类加载(加载、连接、初始化)是在程序运行期间完成的。在程序运行期间进行类加载会稍微增加程序的开销，但随之会带来更大的好处——提高程序的灵活性。Java语言的灵活性体现在它可以在运行期间动态扩展，所谓动态扩展就是在运行期间动态加载和动态连接。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/04/26/jvm8/"/>
+
+
+
+
+
+  <title>深入理解JVM(八)——类加载的时机 | 大闲人柴毛毛</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">大闲人柴毛毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-microservice">
+          <a href="/categories/微服务/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-windows"></i> <br />
+            
+            微服务
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-design-pattern">
+          <a href="/categories/设计模式/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-bug"></i> <br />
+            
+            设计模式
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-networks">
+          <a href="/categories/计算机网络/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-internet-explorer"></i> <br />
+            
+            计算机网络
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-jvm">
+          <a href="/categories/JVM/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-coffee"></i> <br />
+            
+            JVM
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-java并发编程">
+          <a href="/categories/Java并发编程/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-coffee"></i> <br />
+            
+            Java并发编程
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            时间轴
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于我
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/04/26/jvm8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="柴毛毛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大闲人柴毛毛">
+    </span>
+
+    
+      <header class="post-header" style="border-bottom: 2px #ccc dashed;margin-bottom: 20px;">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">深入理解JVM(八)——类加载的时机</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-04-26T16:12:45+08:00">
+                2016-04-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JVM/" itemprop="url" rel="index">
+                    <span itemprop="name">JVM</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,631 字
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  6 分钟
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>C/C++在运行前需要完成预处理、编译、汇编、链接；而在Java中，类加载(加载、连接、初始化)是在程序运行期间完成的。<br>在程序运行期间进行类加载会稍微增加程序的开销，但随之会带来更大的好处——提高程序的灵活性。Java语言的灵活性体现在它可以在运行期间<strong>动态扩展</strong>，所谓动态扩展就是在运行期间<strong>动态加载</strong>和<strong>动态连接</strong>。</p>
+</blockquote>
+<a id="more"></a>
+<h2 id="类的生命周期"><a href="#类的生命周期" class="headerlink" title="类的生命周期"></a>类的生命周期</h2><p>一个类从加载进内存到卸载出内存为止，一共经历7个阶段：<br>加载——&gt;验证——&gt;准备——&gt;解析——&gt;初始化——&gt;使用——&gt;卸载</p>
+<p>其中，类加载包括5个阶段：<br>加载——&gt;验证——&gt;准备——&gt;解析——&gt;初始化</p>
+<p>在类加载的过程中，以下3个过程称为连接：<br>验证——&gt;准备——&gt;解析</p>
+<p>因此，JVM的类加载过程也可以概括为3个过程：<br>加载——&gt;连接——&gt;初始化</p>
+<p>C/C++在运行前需要完成预处理、编译、汇编、链接；而在Java中，类加载(加载、连接、初始化)是在程序运行期间完成的。<br>在程序运行期间进行类加载会稍微增加程序的开销，但随之会带来更大的好处——提高程序的灵活性。Java语言的灵活性体现在它可以在运行期间<strong>动态扩展</strong>，所谓动态扩展就是在运行期间<strong>动态加载</strong>和<strong>动态连接</strong>。</p>
+<h2 id="类加载的时机"><a href="#类加载的时机" class="headerlink" title="类加载的时机"></a>类加载的时机</h2><h3 id="1-类加载过程中每个步骤的顺序"><a href="#1-类加载过程中每个步骤的顺序" class="headerlink" title="1. 类加载过程中每个步骤的顺序"></a>1. 类加载过程中每个步骤的顺序</h3><p>我们已经知道，类加载的过程包括：加载、连接、初始化，连接又分为：验证、准备、解析，所以说类加载一共分为5步：加载、验证、准备、解析、初始化。</p>
+<p>其中加载、验证、准备、初始化的<strong>开始</strong>顺序是依次进行的，这些步骤开始之后的过程可能会有重叠。<br>而解析过程会发生在初始化过程中。</p>
+<h3 id="2-类加载过程中“初始化”开始的时机"><a href="#2-类加载过程中“初始化”开始的时机" class="headerlink" title="2. 类加载过程中“初始化”开始的时机"></a>2. 类加载过程中“初始化”开始的时机</h3><p>JVM规范中只定义了类加载过程中初始化过程开始的时机，加载、连接过程都应该在初始化之前开始(解析除外)，这些过程具体在何时开始，JVM规范并没有定义，不同的虚拟机可以根据具体的需求自定义。</p>
+<p><strong>初始化开始的时机：</strong></p>
+<ol>
+<li>在运行过程中遇到如下字节码指令时，如果类尚未初始化，那就要进行初始化：new、getstatic、putstatic、invokestatic。这四个指令对应的Java代码场景是：</li>
+</ol>
+<ul>
+<li>通过new创建对象；</li>
+<li>读取、设置一个类的静态成员变量(不包括final修饰的静态变量)；</li>
+<li>调用一个类的静态成员函数。</li>
+</ul>
+<ol>
+<li>使用java.lang.reflect进行反射调用的时候，如果类没有初始化，那就需要初始化；</li>
+<li>当初始化一个类的时候，若其父类尚未初始化，那就先要让其父类初始化，然后再初始化本类；</li>
+<li>当虚拟机启动时，虚拟机会首先初始化带有main方法的类，即主类；</li>
+</ol>
+<h3 id="3-主动引用-与-被动引用"><a href="#3-主动引用-与-被动引用" class="headerlink" title="3. 主动引用 与 被动引用"></a>3. 主动引用 与 被动引用</h3><p>JVM规范中要求在程序运行过程中，“当且仅当”出现上述4个条件之一的情况才会初始化一个类。如果间接满足上述初始化条件是不会初始化类的。<br>其中，直接满足上述初始化条件的情况叫做<strong>主动引用</strong>；间接满足上述初始化过程的情况叫做<strong>被动引用</strong>。<br>那么，只有当程序在运行过程中满足主动引用的时候才会初始化一个类，若满足被动引用就不会初始化一个类。</p>
+<h3 id="4-被动引用的场景示例"><a href="#4-被动引用的场景示例" class="headerlink" title="4. 被动引用的场景示例"></a>4. 被动引用的场景示例</h3><ol>
+<li>示例一<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Fu</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> String name = <span class="string">"柴毛毛"</span>;</span><br><span class="line">    <span class="keyword">static</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"父类被初始化！"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Zi</span></span>&#123;</span><br><span class="line">    <span class="keyword">static</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"子类被初始化！"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">    System.out.println(Zi.name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><strong>输出结果：</strong><br>父类被初始化！<br>柴毛毛<br><strong>原因分析：</strong><br>本示例看似满足初始化时机的第一条：当要获取某一个类的静态成员变量的时候如果该类尚未初始化，则对该类进行初始化。<br>但由于这个静态成员变量属于Fu类，Zi类只是间接调用Fu类中的静态成员变量，因此Zi类调用name属性属于间接引用，而Fu类调用name属性属于直接引用，由于JVM只初始化直接引用的类，因此只有Fu类被初始化。</p>
+<ol>
+<li>示例二<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">A</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        Fu[] arr = <span class="keyword">new</span> Fu[<span class="number">10</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><strong>输出结果：</strong><br>并没有输出“父类被初始化！”<br><strong>原因分析：</strong><br>这个过程看似满足初始化时机的第一条：遇到new创建对象时若类没被初始化，则初始化该类。<br>但现在通过new要创建的是一个数组对象，而非Fu类对象，因此也属于间接引用，不会初始化Fu类。</p>
+<ol>
+<li>示例三<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Fu</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String name = <span class="string">"柴毛毛"</span>;</span><br><span class="line">    <span class="keyword">static</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"父类被初始化！"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">A</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        System.out.println(Fu.name);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><strong>输出结果：</strong><br>柴毛毛<br><strong>原因分析：</strong><br>本示例看似满足类初始化时机的第一个条件：获取一个类静态成员变量的时候若类尚未初始化则初始化类。<br>但是，Fu类的静态成员变量被final修饰，它已经是一个常量。被final修饰的常量在Java代码编译的过程中就会被放入它被引用的class文件的常量池中(这里是A的常量池)。所以程序在运行期间如果需要调用这个常量，直接去当前类的常量池中取，而不需要初始化这个类。</p>
+<h3 id="5-接口的初始化"><a href="#5-接口的初始化" class="headerlink" title="5. 接口的初始化"></a>5. 接口的初始化</h3><p>接口和类都需要初始化，接口和类的初始化过程基本一样，不同点在于：类初始化时，如果发现父类尚未被初始化，则先要初始化父类，然后再初始化自己；但接口初始化时，并不要求父接口已经全部初始化，只有程序在运行过程中用到当父接口中的东西时才初始化父接口。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+            
+              
+            
+      </div>
+
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/qrcode.jpg" alt="柴毛毛 wechat" style="width: 200px; max-width: 100%;"/>
+    <div>扫一扫订阅我的文章</div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>请我一杯咖啡</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/uploads/WechatIMG45.jpeg" alt="柴毛毛 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/uploads/WechatIMG46.jpeg" alt="柴毛毛 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    柴毛毛
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2016/04/26/jvm8/" title="深入理解JVM(八)——类加载的时机">http://yoursite.com/2016/04/26/jvm8/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/04/25/jvm7/" rel="next" title="深入理解JVM(七)——Class文件结构">
+                <i class="fa fa-chevron-left"></i> 深入理解JVM(七)——Class文件结构
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/04/26/jvm9/" rel="prev" title="深入理解JVM(九)——类加载的过程">
+                深入理解JVM(九)——类加载的过程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="柴毛毛" />
+            
+              <p class="site-author-name" itemprop="name">柴毛毛</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-name">文章</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.zhihu.com/people/chai-bo-zhou/" target="_blank" title="知乎">
+                      
+                        <i class="fa fa-fw fa-indent"></i>知乎</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="http://blog.csdn.net/u010425776" target="_blank" title="CSDN">
+                      
+                        <i class="fa fa-fw fa-rocket"></i>CSDN</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/bz51" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:chaibozhou@foxmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#类的生命周期"><span class="nav-number">1.</span> <span class="nav-text">类的生命周期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类加载的时机"><span class="nav-number">2.</span> <span class="nav-text">类加载的时机</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-类加载过程中每个步骤的顺序"><span class="nav-number">2.1.</span> <span class="nav-text">1. 类加载过程中每个步骤的顺序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-类加载过程中“初始化”开始的时机"><span class="nav-number">2.2.</span> <span class="nav-text">2. 类加载过程中“初始化”开始的时机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-主动引用-与-被动引用"><span class="nav-number">2.3.</span> <span class="nav-text">3. 主动引用 与 被动引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-被动引用的场景示例"><span class="nav-number">2.4.</span> <span class="nav-text">4. 被动引用的场景示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-接口的初始化"><span class="nav-number">2.5.</span> <span class="nav-text">5. 接口的初始化</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">柴毛毛</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">63.1k</span>
+  
+</div>
+
+
+  <div class="powered-by">
+    <i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+      本站访客数:<span id="busuanzi_value_site_uv"></span>
+    </span>
+  </div>
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

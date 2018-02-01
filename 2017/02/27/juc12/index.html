@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/logo.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/logo.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.png?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hello" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="如果一个对象构造完成后，调用者无需额外的操作，就可以在多线程环境下随意地使用，并且不发生错误，那么这个对象就是线程安全的。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java并发编程的艺术(十二)——线程安全">
+<meta property="og:url" content="http://yoursite.com/2017/02/27/juc12/index.html">
+<meta property="og:site_name" content="大闲人柴毛毛">
+<meta property="og:description" content="如果一个对象构造完成后，调用者无需额外的操作，就可以在多线程环境下随意地使用，并且不发生错误，那么这个对象就是线程安全的。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-02-01T05:48:52.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java并发编程的艺术(十二)——线程安全">
+<meta name="twitter:description" content="如果一个对象构造完成后，调用者无需额外的操作，就可以在多线程环境下随意地使用，并且不发生错误，那么这个对象就是线程安全的。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/02/27/juc12/"/>
+
+
+
+
+
+  <title>Java并发编程的艺术(十二)——线程安全 | 大闲人柴毛毛</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">大闲人柴毛毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-microservice">
+          <a href="/categories/微服务/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-windows"></i> <br />
+            
+            微服务
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-design-pattern">
+          <a href="/categories/设计模式/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-bug"></i> <br />
+            
+            设计模式
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-networks">
+          <a href="/categories/计算机网络/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-internet-explorer"></i> <br />
+            
+            计算机网络
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-jvm">
+          <a href="/categories/JVM/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-coffee"></i> <br />
+            
+            JVM
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-java并发编程">
+          <a href="/categories/Java并发编程/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-coffee"></i> <br />
+            
+            Java并发编程
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            时间轴
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于我
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/02/27/juc12/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="柴毛毛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大闲人柴毛毛">
+    </span>
+
+    
+      <header class="post-header" style="border-bottom: 2px #ccc dashed;margin-bottom: 20px;">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Java并发编程的艺术(十二)——线程安全</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-27T23:14:44+08:00">
+                2017-02-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java并发编程/" itemprop="url" rel="index">
+                    <span itemprop="name">Java并发编程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  56 字
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  1 分钟
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>如果一个对象构造完成后，调用者无需额外的操作，就可以在多线程环境下随意地使用，并且不发生错误，那么这个对象就是线程安全的。</p>
+</blockquote>
+<!--more->
+
+## 1. 什么是『线程安全』？
+如果一个对象构造完成后，调用者无需额外的操作，就可以在多线程环境下随意地使用，并且不发生错误，那么这个对象就是线程安全的。
+
+## 2. 线程安全的几种程度
+**线程安全性的前提：**对『线程安全性』的讨论必须建立在对象内部存在共享变量这一前提，若对象在多条线程间没有共享数据，那这个对象一定是线程安全的！
+
+### 2.1. 绝对的线程安全
+上述线程安全性的定义即为绝对线程安全的情况，即：一个对象在构造完之后，调用者无需任何额外的操作，就可以在多线程环境下随意使用。
+绝对的线程安全是一种理想的状态，若要达到这一状态，往往需要付出巨大的代价。
+通常并不需要达到绝对的线程安全。
+
+### 2.2. 相对的线程安全
+我们通常所说的『线程安全』即为『相对的线程安全』，JDK中标注为线程安全的类通常就是『相对的线程安全』，如：Vector、HashTable、Collections.synchronizedXXX。
+对于相对线程安全的类，使用它们时一般不需要使用额外的保障措施，但对于一些特定的使用场景，仍然需要额外的操作来保证线程安全，如：
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 读线程</span></span><br><span class="line">Thread t1 = <span class="keyword">new</span> Thread( <span class="keyword">new</span> Runnable()&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;vector.size(); i++)&#123;</span><br><span class="line">            System.out.println( vector.get(i) );</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;).start();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 写线程</span></span><br><span class="line">Thread t2 = <span class="keyword">new</span> Thread( <span class="keyword">new</span> Runnable()&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;vector.size(); i++)&#123;</span><br><span class="line">            vector.remove(i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;).start();</span><br></pre></td></tr></table></figure>
+<p>vector是一个线程安全的容器，它所提供的方法均为同步方法，但上述代码仍然会出现线程安全性问题：<br>若线程1读了一半的元素后暂停，线程2开始执行，并删除了所有的元素，然后线程1继续执行，此时发生角标越界异常！<br>修改方案：加上额外的同步<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 读线程</span></span><br><span class="line">Thread t1 = <span class="keyword">new</span> Thread( <span class="keyword">new</span> Runnable()&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span>( vector )&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;vector.size(); i++)&#123;</span><br><span class="line">                System.out.println( vector.get(i) );</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;).start();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 写线程</span></span><br><span class="line">Thread t2 = <span class="keyword">new</span> Thread( <span class="keyword">new</span> Runnable()&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span>( vector )&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;vector.size(); i++)&#123;</span><br><span class="line">                vector.remove(i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;).start();</span><br></pre></td></tr></table></figure></p>
+<h3 id="2-3-线程对立"><a href="#2-3-线程对立" class="headerlink" title="2.3. 线程对立"></a>2.3. 线程对立</h3><p>线程对立指的是：不论调用者采用何种同步措施，都无法达到线程安全的目的。<br>如Thread类的suspend、resume方法就是线程对立的方法。<br>suspend方法会暂停线程，但它不会释放资源，若resume需要请求到该资源才会被运行的话，系统就会进入死锁状态。</p>
+<h2 id="3-实现线程安全的方法"><a href="#3-实现线程安全的方法" class="headerlink" title="3. 实现线程安全的方法"></a>3. 实现线程安全的方法</h2><h3 id="3-1-互斥同步"><a href="#3-1-互斥同步" class="headerlink" title="3.1. 互斥同步"></a>3.1. 互斥同步</h3><p>同步指的是同一时刻，只有一条线程操作『共享变量』。</p>
+<p>实现同步的方式有很多：互斥访问、CAS操作。<br>互斥会引起阻塞，当一条线程请求一个已经被另一线程使用的锁时，就会进入阻塞态；而进入阻塞态会涉及上下文切换。因此，使用互斥来实现同步的开销是很大的。</p>
+<p>互斥同步(阻塞式同步)是一种『悲观锁』，即它认为总是存在多条线程竞争资源的情况，因此它不管当前是不是真的有多条线程在竞争共享资源，它总是先上锁，然后再处理。</p>
+<p>Java中有两种实现互斥同步的方式：synchronized和ReentrantLock。</p>
+<ol>
+<li>synchronized<ul>
+<li>编译器会在synchronized同步块的开始和结束位置加上monitorenter和monitorexit指令；</li>
+<li>这两个指令需要一个reference类型的参数来指名要锁定和解锁的对象；</li>
+<li>若同步块没有明确指定锁对象，那么就使用当前对象或当前类的Class对象；</li>
+<li>它是一把可重入的锁，即：当前线程在已经获得锁的情况下，可以再次获取该锁，因此不会出现当前线程把自己锁死的情况；</li>
+</ul>
+</li>
+<li>ReentrantLock<br> 它也是一把可重入的锁，但比synchronized多如下功能：<ul>
+<li>等待可中断：若一条线程长时间占用锁不释放，那被阻塞的线程可以选择放弃等待，而去做别的事；这对于要处理长时间的同步块时是很有帮助的。</li>
+<li>可实现公平锁：synchronized是一种非公平锁，即：被阻塞的线程竞争锁是随机的；而公平锁是根据被阻塞线程先来后到的顺序给予锁。ReentrantLock默认是非公平锁，可以通过构造函数构造公平锁。</li>
+<li>可以绑定多个条件：synchronized可使用wait/notify来实现等待/通知机制，但一个synchronized同步块只能使用一次，若要使用多次，就需要嵌套同步块；但ReentrantLock可以通过newCondition创建多个条件。</li>
+</ul>
+</li>
+</ol>
+<p>synchronized和ReentrantLock如何选择？<br>优先选择synchronized！<br>JDK1.6已经对synchronized做了很多优化，性能与ReentrantLock相差不大。在条件允许的请况下应优先选择synchronized。</p>
+<h3 id="3-2-非阻塞同步"><a href="#3-2-非阻塞同步" class="headerlink" title="3.2. 非阻塞同步"></a>3.2. 非阻塞同步</h3><p>它是一种『乐观锁』，即它总是认为当前没有线程使用共享资源，因此它不管当前的状态，直接操作共享资源，若发现产生了冲突，那么再采取补偿措施（如：CAS的补偿措施就是不断尝试，直到不发生冲突为止），这种方式线程无需进入阻塞态(挂起态)，因此称为『非阻塞同步』。</p>
+<p>JUC中各种整形原子类的自增、自减等操作就使用了CAS。</p>
+<p>CAS操作过程：CAS操作存在3个值：共享变量V、预期的旧值A、新值B，若V与A相同，则将V更新成B，否则就不更新，继续循环比较，直到更新完成为止。</p>
+<p>CAS操作可能引发的问题：ABA问题。<br>若V一开始的值为A，但在准备赋新值的过程中A变成了B，又变成了A，而CAS操作误认为V没有被改过。</p>
+<h3 id="无同步方案"><a href="#无同步方案" class="headerlink" title="无同步方案"></a>无同步方案</h3><p>『阻塞式同步』和『非阻塞式同步』都是同一时刻只让一条线程处理共享数据，而下面的方案使得多条线程之间不存在共享数据，从而无需同步。</p>
+<ol>
+<li><p>可重入代码<br>如果一块代码段只要输入的值一样其结果就一样的话，这段代码就叫『可重入代码』。<br>这一类代码天生具有线程安全性，线程随意切换结果都一样。</p>
+</li>
+<li><p>线程封闭<br>线程封闭：把所有涉及共享变量操作的任务都放在一个线程中运行。<br>这样就不存在多条线程同时处理共享变量了，从而达到了线程安全目的。</p>
+</li>
+</ol>
+<p>WEB服务器采用的就是这种方式，它把每个请求封装在一条线程中处理，从而不存在线程安全性问题。</p>
+<ol>
+<li>不可变对象<br>如果是共享的基本数据类型变量，只要被final修饰，它就是不可变的；<br>如果是共享的对象，那就要确保它内部的共享成员变量不会被它的行为所改变。<br>PS：保证对象内部共享变量不会被改变的方法有很多，最简单粗暴的方式就是将所有共享变量用final修饰。</li>
+</ol>
+<p>不可变对象一定是线程安全的。</p>
+-->
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+            
+              
+            
+      </div>
+
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/qrcode.jpg" alt="柴毛毛 wechat" style="width: 200px; max-width: 100%;"/>
+    <div>扫一扫订阅我的文章</div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>请我一杯咖啡</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/uploads/WechatIMG45.jpeg" alt="柴毛毛 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/uploads/WechatIMG46.jpeg" alt="柴毛毛 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    柴毛毛
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2017/02/27/juc12/" title="Java并发编程的艺术(十二)——线程安全">http://yoursite.com/2017/02/27/juc12/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/02/24/juc11/" rel="next" title="Java并发编程的艺术(十一)——线程池(2)">
+                <i class="fa fa-chevron-left"></i> Java并发编程的艺术(十一)——线程池(2)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/02/28/juc13/" rel="prev" title="Java并发编程的艺术(十三)——锁优化">
+                Java并发编程的艺术(十三)——锁优化 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="柴毛毛" />
+            
+              <p class="site-author-name" itemprop="name">柴毛毛</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-name">文章</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.zhihu.com/people/chai-bo-zhou/" target="_blank" title="知乎">
+                      
+                        <i class="fa fa-fw fa-indent"></i>知乎</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="http://blog.csdn.net/u010425776" target="_blank" title="CSDN">
+                      
+                        <i class="fa fa-fw fa-rocket"></i>CSDN</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/bz51" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:chaibozhou@foxmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">柴毛毛</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">63.1k</span>
+  
+</div>
+
+
+  <div class="powered-by">
+    <i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+      本站访客数:<span id="busuanzi_value_site_uv"></span>
+    </span>
+  </div>
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

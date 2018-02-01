@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/logo.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/logo.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.png?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hello" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="并发是为了提升程序的执行速度，但并不是多线程一定比单线程高效，而且并发编程容易出错。若要实现正确且高效的并发，就要在开发过程中时刻注意以下三个问题：  上下文切换 死锁 资源限制  接下来会逐一分析这三个问题，并给出相应的解决方案。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java并发编程的艺术(一)——并发编程需要注意的问题">
+<meta property="og:url" content="http://yoursite.com/2017/01/08/juc1/index.html">
+<meta property="og:site_name" content="大闲人柴毛毛">
+<meta property="og:description" content="并发是为了提升程序的执行速度，但并不是多线程一定比单线程高效，而且并发编程容易出错。若要实现正确且高效的并发，就要在开发过程中时刻注意以下三个问题：  上下文切换 死锁 资源限制  接下来会逐一分析这三个问题，并给出相应的解决方案。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-02-01T05:32:55.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java并发编程的艺术(一)——并发编程需要注意的问题">
+<meta name="twitter:description" content="并发是为了提升程序的执行速度，但并不是多线程一定比单线程高效，而且并发编程容易出错。若要实现正确且高效的并发，就要在开发过程中时刻注意以下三个问题：  上下文切换 死锁 资源限制  接下来会逐一分析这三个问题，并给出相应的解决方案。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/01/08/juc1/"/>
+
+
+
+
+
+  <title>Java并发编程的艺术(一)——并发编程需要注意的问题 | 大闲人柴毛毛</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">大闲人柴毛毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-microservice">
+          <a href="/categories/微服务/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-windows"></i> <br />
+            
+            微服务
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-design-pattern">
+          <a href="/categories/设计模式/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-bug"></i> <br />
+            
+            设计模式
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-networks">
+          <a href="/categories/计算机网络/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-internet-explorer"></i> <br />
+            
+            计算机网络
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-jvm">
+          <a href="/categories/JVM/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-coffee"></i> <br />
+            
+            JVM
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-java并发编程">
+          <a href="/categories/Java并发编程/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-coffee"></i> <br />
+            
+            Java并发编程
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            时间轴
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于我
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/01/08/juc1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="柴毛毛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大闲人柴毛毛">
+    </span>
+
+    
+      <header class="post-header" style="border-bottom: 2px #ccc dashed;margin-bottom: 20px;">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Java并发编程的艺术(一)——并发编程需要注意的问题</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-01-08T12:39:44+08:00">
+                2017-01-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java并发编程/" itemprop="url" rel="index">
+                    <span itemprop="name">Java并发编程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,934 字
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  7 分钟
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>并发是为了提升程序的执行速度，但并不是多线程一定比单线程高效，而且并发编程容易出错。若要实现正确且高效的并发，就要在开发过程中时刻注意以下三个问题：</p>
+<ul>
+<li>上下文切换</li>
+<li>死锁</li>
+<li>资源限制</li>
+</ul>
+<p>接下来会逐一分析这三个问题，并给出相应的解决方案。</p>
+<a id="more"></a>
+<h1 id="问题一：上下文切换会带来额外的开销"><a href="#问题一：上下文切换会带来额外的开销" class="headerlink" title="问题一：上下文切换会带来额外的开销"></a>问题一：上下文切换会带来额外的开销</h1><h2 id="线程的运行机制"><a href="#线程的运行机制" class="headerlink" title="线程的运行机制"></a>线程的运行机制</h2><ul>
+<li>一个CPU每个时刻只能执行一条线程；</li>
+<li>操作系统给每条线程分配不同长度的时间片；</li>
+<li>操作系统会从一堆线程中随机选取一条来执行；</li>
+<li>每条线程用完自己的时间片后，即使任务还没完成，操作系统也会剥夺它的执行权，让另一条线程执行</li>
+</ul>
+<h2 id="什么是“上下文切换”？"><a href="#什么是“上下文切换”？" class="headerlink" title="什么是“上下文切换”？"></a>什么是“上下文切换”？</h2><p>当一条线程的时间片用完后，操作系统会暂停该线程，并保存该线程相应的信息，然后再随机选择一条新线程去执行，这个过程就称为“线程的上下文切换”。</p>
+<h1 id="上下文切换的过程"><a href="#上下文切换的过程" class="headerlink" title="上下文切换的过程"></a>上下文切换的过程</h1><ul>
+<li>暂停正在执行的线程；</li>
+<li>保存该线程的相关信息（如：执行到哪一行、程序计算的中间结果等）</li>
+<li>从就绪队列中随机选一条线程；</li>
+<li>读取该线程的上下文信息，继续执行</li>
+</ul>
+<h2 id="上下文切换是有开销的"><a href="#上下文切换是有开销的" class="headerlink" title="上下文切换是有开销的"></a>上下文切换是有开销的</h2><p>每次进行上下文切换时都需要保存当前线程的执行状态，并加载新线程先前的状态。<br>如果上下文切换频繁，CPU花在上下文切换上的时间占比就会上升，而真正处理任务的时间占比就会下降。<br>因此，为了提高并发程序的执行效率，让CPU把时间花在刀刃上，我们需要减少上下文切换的次数。</p>
+<h2 id="如何减少上下文切换？"><a href="#如何减少上下文切换？" class="headerlink" title="如何减少上下文切换？"></a>如何减少上下文切换？</h2><ul>
+<li><p>减少线程的数量<br>由于一个CPU每个时刻只能执行一条线程，而傲娇的我们又想让程序并发执行，操作系统只好不断地进行上下文切换来使我们从感官上觉得程序是并发执的行。因此，我们只要减少线程的数量，就能减少上下文切换的次数。<br>然而如果线程数量已经少于CPU核数，每个CPU执行一条线程，照理来说CPU不需要进行上下文切换了，但事实并非如此。</p>
+</li>
+<li><p>控制同一把锁上的线程数量<br>如果多条线程共用同一把锁，那么当一条线程获得锁后，其他线程就会被阻塞；当该线程释放锁后，操作系统会从被阻塞的线程中选一条执行，从而又会出现上下文切换。<br>因此，减少同一把锁上的线程数量也能减少上下文切换的次数。</p>
+</li>
+<li><p>采用无锁并发编程<br>我们知道，如果减少同一把锁上线程的数量就能减少上下文切换的次数，那么如果不用锁，是否就能避免因竞争锁而产生的上下文切换呢？<br>答案是肯定的！但你需要根据以下两种情况挑选不同的策略：</p>
+</li>
+</ul>
+<ol>
+<li>需要并发执行的任务是无状态的：HASH分段<br>所谓无状态是指并发执行的任务没有共享变量，他们都独立执行。对于这种类型的任务可以按照ID进行HASH分段，每段用一条线程去执行。</li>
+<li>需要并发执行的任务是有状态的：CAS算法<br>如果任务需要修改共享变量，那么必须要控制线程的执行顺序，否则会出现安全性问题。你可以给任务加锁，保证任务的原子性与可见性，但这会引起阻塞，从而发生上下文切换；为了避免上下文切换，你可以使用CAS算法， 仅在线程内部需要更新共享变量时使用CAS算法来更新，这种方式不会阻塞线程，并保证更新过程的安全性。</li>
+</ol>
+<h1 id="问题二：并发不当可能会产生死锁"><a href="#问题二：并发不当可能会产生死锁" class="headerlink" title="问题二：并发不当可能会产生死锁"></a>问题二：并发不当可能会产生死锁</h1><h2 id="什么是“死锁”？"><a href="#什么是“死锁”？" class="headerlink" title="什么是“死锁”？"></a>什么是“死锁”？</h2><p>当多个线程相互等待已经被对方占用的资源时，就会产生死锁。</p>
+<h2 id="死锁示例"><a href="#死锁示例" class="headerlink" title="死锁示例"></a>死锁示例</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DeadLock</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 锁A</span></span><br><span class="line">    <span class="keyword">private</span> Object lockA;</span><br><span class="line">    <span class="comment">// 锁B</span></span><br><span class="line">    <span class="keyword">private</span> Object lockB;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 第一条线程</span></span><br><span class="line">    Thread t1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable()&#123;</span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">run</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (lockA) &#123;</span><br><span class="line">                Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">                <span class="keyword">synchronized</span> (lockB) &#123;</span><br><span class="line">                    System.out.println(<span class="string">"线程1"</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;).start();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 第二条线程</span></span><br><span class="line">    Thread t2 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable()&#123;</span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">run</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (lockB) &#123;</span><br><span class="line">                Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">                <span class="keyword">synchronized</span> (lockA) &#123;</span><br><span class="line">                    System.out.println(<span class="string">"线程2"</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;).start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>线程1和线程2都需要锁A和锁B</li>
+<li>线程1首先获得锁A，然后sleep 5秒<br>PS：线程sleep过程中会释放执行权</li>
+<li>此时线程2执行，获得锁B，然后也sleep 5秒；</li>
+<li>线程1 sleep 5秒后继续执行，此时需要锁B，然而锁B已经被线程2持有，因此线程1被阻塞；</li>
+<li>此时线程2醒了，它需要锁A，然而锁A已经被线程1持有，因此它也被阻塞；</li>
+<li>此时死锁出现了！两条线程相互等待已经被占用的资源，程序就死在这了。<br>死锁是并发编程中一个重要的问题，上面介绍的减少上下文切换只是为了提升程序的性能，而一旦产生死锁，程序就不能正确执行！</li>
+</ul>
+<h2 id="如何避免死锁？"><a href="#如何避免死锁？" class="headerlink" title="如何避免死锁？"></a>如何避免死锁？</h2><ul>
+<li>不要在一条线程中嵌套使用多个锁；</li>
+<li>不要在一条线程中嵌套占用多个计算机资源；</li>
+<li>给锁和资源加超时时间<br>如果你非要在一条线程中嵌套使用多个锁或占用多个资源，那你需要给锁、资源加超时时间，从而避免无限期的等待。</li>
+</ul>
+<h1 id="问题三：计算机资源会限制并发"><a href="#问题三：计算机资源会限制并发" class="headerlink" title="问题三：计算机资源会限制并发"></a>问题三：计算机资源会限制并发</h1><h2 id="误区：线程越多速度越快"><a href="#误区：线程越多速度越快" class="headerlink" title="误区：线程越多速度越快"></a>误区：线程越多速度越快</h2><p>在并发编程中，并不是线程越多越好，有时候线程多了反而会拉低执行效率，原因如下：</p>
+<ul>
+<li>线程多了会导致上下文切换增多，CPU花在上下文切换的时间增多后，花在处理任务上的时间自然就减少了。</li>
+<li>计算机资源会限制程序的并发度。<ul>
+<li>比如：你家网入口带宽10M，你写了个多线程下载的软件，同时开100条线程下载，那每条线程平均以每秒100k的速度下载，然而100条线程之间还要不断进行上下文切换，所以你还不如只开5条线程，每条平均2M/s的速度下载。</li>
+<li>再比如：数据库连接池最多给你用10个连接，然而你却开了100条线程进行数据库操作，那么当10个用完后其他线程就要等待，从而操作系统要在这100条线程间不断进行上下文切换；所以与其这样还不如只开10条线程，减少上下文切换的次数。</li>
+</ul>
+</li>
+</ul>
+<p>说了这么多只想告诉你一个道理：线程并不是越多越好，要根据当前计算机所能提供的资源考虑。</p>
+<h2 id="什么是“资源”？"><a href="#什么是“资源”？" class="headerlink" title="什么是“资源”？"></a>什么是“资源”？</h2><p>资源分为硬件资源和软件资源：</p>
+<ul>
+<li>硬件资源<ul>
+<li>硬盘读写速度</li>
+<li>网络带宽</li>
+<li>等</li>
+</ul>
+</li>
+<li>软件资源<ul>
+<li>Socket连接数</li>
+<li>数据库连接数</li>
+<li>等</li>
+</ul>
+</li>
+</ul>
+<h2 id="如何解决资源的限制？"><a href="#如何解决资源的限制？" class="headerlink" title="如何解决资源的限制？"></a>如何解决资源的限制？</h2><ul>
+<li>花钱买更高级的机器</li>
+<li>根据资源限制并发度</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+            
+              
+            
+      </div>
+
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/qrcode.jpg" alt="柴毛毛 wechat" style="width: 200px; max-width: 100%;"/>
+    <div>扫一扫订阅我的文章</div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>请我一杯咖啡</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/uploads/WechatIMG45.jpeg" alt="柴毛毛 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/uploads/WechatIMG46.jpeg" alt="柴毛毛 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    柴毛毛
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2017/01/08/juc1/" title="Java并发编程的艺术(一)——并发编程需要注意的问题">http://yoursite.com/2017/01/08/juc1/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/04/26/jvm9/" rel="next" title="深入理解JVM(九)——类加载的过程">
+                <i class="fa fa-chevron-left"></i> 深入理解JVM(九)——类加载的过程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/01/09/juc2/" rel="prev" title="Java并发编程的艺术（二）——重排序">
+                Java并发编程的艺术（二）——重排序 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="柴毛毛" />
+            
+              <p class="site-author-name" itemprop="name">柴毛毛</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-name">文章</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.zhihu.com/people/chai-bo-zhou/" target="_blank" title="知乎">
+                      
+                        <i class="fa fa-fw fa-indent"></i>知乎</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="http://blog.csdn.net/u010425776" target="_blank" title="CSDN">
+                      
+                        <i class="fa fa-fw fa-rocket"></i>CSDN</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/bz51" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:chaibozhou@foxmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#问题一：上下文切换会带来额外的开销"><span class="nav-number">1.</span> <span class="nav-text">问题一：上下文切换会带来额外的开销</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#线程的运行机制"><span class="nav-number">1.1.</span> <span class="nav-text">线程的运行机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是“上下文切换”？"><span class="nav-number">1.2.</span> <span class="nav-text">什么是“上下文切换”？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#上下文切换的过程"><span class="nav-number">2.</span> <span class="nav-text">上下文切换的过程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#上下文切换是有开销的"><span class="nav-number">2.1.</span> <span class="nav-text">上下文切换是有开销的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何减少上下文切换？"><span class="nav-number">2.2.</span> <span class="nav-text">如何减少上下文切换？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#问题二：并发不当可能会产生死锁"><span class="nav-number">3.</span> <span class="nav-text">问题二：并发不当可能会产生死锁</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是“死锁”？"><span class="nav-number">3.1.</span> <span class="nav-text">什么是“死锁”？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#死锁示例"><span class="nav-number">3.2.</span> <span class="nav-text">死锁示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何避免死锁？"><span class="nav-number">3.3.</span> <span class="nav-text">如何避免死锁？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#问题三：计算机资源会限制并发"><span class="nav-number">4.</span> <span class="nav-text">问题三：计算机资源会限制并发</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#误区：线程越多速度越快"><span class="nav-number">4.1.</span> <span class="nav-text">误区：线程越多速度越快</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是“资源”？"><span class="nav-number">4.2.</span> <span class="nav-text">什么是“资源”？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何解决资源的限制？"><span class="nav-number">4.3.</span> <span class="nav-text">如何解决资源的限制？</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">柴毛毛</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">63.1k</span>
+  
+</div>
+
+
+  <div class="powered-by">
+    <i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+      本站访客数:<span id="busuanzi_value_site_uv"></span>
+    </span>
+  </div>
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

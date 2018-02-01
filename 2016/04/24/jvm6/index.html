@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+<script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+<link href="//cdn.bootcss.com/pace/1.0.2/themes/pink/pace-theme-flash.css" rel="stylesheet">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/logo.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/logo.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.png?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hello" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="为了充分利用高性能服务器的硬件资源，有两种JVM调优方案，它们都有各自的优缺点，需要根据具体的情况进行选择。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解JVM(六)——JVM性能调优实战">
+<meta property="og:url" content="http://yoursite.com/2016/04/24/jvm6/index.html">
+<meta property="og:site_name" content="大闲人柴毛毛">
+<meta property="og:description" content="为了充分利用高性能服务器的硬件资源，有两种JVM调优方案，它们都有各自的优缺点，需要根据具体的情况进行选择。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-02-01T05:25:31.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入理解JVM(六)——JVM性能调优实战">
+<meta name="twitter:description" content="为了充分利用高性能服务器的硬件资源，有两种JVM调优方案，它们都有各自的优缺点，需要根据具体的情况进行选择。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/04/24/jvm6/"/>
+
+
+
+
+
+  <title>深入理解JVM(六)——JVM性能调优实战 | 大闲人柴毛毛</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">大闲人柴毛毛</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description"></h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-microservice">
+          <a href="/categories/微服务/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-windows"></i> <br />
+            
+            微服务
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-design-pattern">
+          <a href="/categories/设计模式/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-bug"></i> <br />
+            
+            设计模式
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-networks">
+          <a href="/categories/计算机网络/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-internet-explorer"></i> <br />
+            
+            计算机网络
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-jvm">
+          <a href="/categories/JVM/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-coffee"></i> <br />
+            
+            JVM
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-java并发编程">
+          <a href="/categories/Java并发编程/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-coffee"></i> <br />
+            
+            Java并发编程
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            时间轴
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于我
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/04/24/jvm6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="柴毛毛">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大闲人柴毛毛">
+    </span>
+
+    
+      <header class="post-header" style="border-bottom: 2px #ccc dashed;margin-bottom: 20px;">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">深入理解JVM(六)——JVM性能调优实战</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-04-24T10:47:32+08:00">
+                2016-04-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JVM/" itemprop="url" rel="index">
+                    <span itemprop="name">JVM</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,974 字
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  7 分钟
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>为了充分利用高性能服务器的硬件资源，有两种JVM调优方案，它们都有各自的优缺点，需要根据具体的情况进行选择。</p>
+</blockquote>
+<a id="more"></a>
+<h2 id="如何在高性能服务器上进行JVM调优？"><a href="#如何在高性能服务器上进行JVM调优？" class="headerlink" title="如何在高性能服务器上进行JVM调优？"></a>如何在高性能服务器上进行JVM调优？</h2><p>为了充分利用高性能服务器的硬件资源，有两种JVM调优方案，它们都有各自的优缺点，需要根据具体的情况进行选择。</p>
+<h3 id="1-采用64位操作系统，并为JVM分配大内存"><a href="#1-采用64位操作系统，并为JVM分配大内存" class="headerlink" title="1. 采用64位操作系统，并为JVM分配大内存"></a>1. 采用64位操作系统，并为JVM分配大内存</h3><p>我们知道，如果JVM中堆内存太小，那么就会频繁地发生垃圾回收，而垃圾回收都会伴随不同程度的程序停顿，因此，如果扩大堆内存的话可以减少垃圾回收的频率，从而避免程序的停顿。</p>
+<p>因此，人们自然而然想到扩大内存容量。而32位操作系统理论上最大只支持4G内存，64位操作系统最大能支持128G内存，因此我们可以使用64位操作系统，并使用64位JVM，并为JVM分配更大的堆内存。但问题也随之而来。</p>
+<p>堆内存变大后，虽然垃圾收集的频率减少了，但每次垃圾回收的时间变长。如果对内存为14G，那么每次Full GC将长达数十秒。如果Full GC频繁发生，那么对于一个网站来说是无法忍受的。</p>
+<p>因此，对于使用大内存的程序来说，一定要减少Full GC的频率，如果每天只有一两次Full GC，而且发生在半夜， 那完全可以接受。</p>
+<p>要减少Full GC的频率，就要尽量避免太多对象进入老年代，可以有以下做法：</p>
+<ul>
+<li>确保对象都是“朝生夕死”的<br>一个对象使用完后应尽快让他失效，然后尽快在新生代中被Minor GC回收掉，尽量避免对象在新生代中停留太长时间。</li>
+<li>提高大对象直接进入老年代的门槛<br>通过设置参数-XX:PretrnureSizeThreshold来提高大对象的门槛，尽量让对象都先进入新生代，然后尽快被Minor GC回收掉，而不要直接进入老年代。</li>
+</ul>
+<h4 id="注意：使用64位JDK的注意点"><a href="#注意：使用64位JDK的注意点" class="headerlink" title="注意：使用64位JDK的注意点"></a>注意：使用64位JDK的注意点</h4><ol>
+<li>64位JDK支持更大的堆内存，但更大的堆内存会导致一次垃圾回收时间过长。</li>
+<li>现阶段，64位JDK的性能普遍比32位JDK低。</li>
+<li>堆内存过大无法在发生内存溢出时生成内存快照<br>若将堆内存设为10G，那么当堆内存溢出时就要生成10G的大文件，这基本上是不可能的。</li>
+<li>相同程序，64位JDK要比32位JDK消耗更大的内存</li>
+</ol>
+<h3 id="2-使用32位JVM集群"><a href="#2-使用32位JVM集群" class="headerlink" title="2. 使用32位JVM集群"></a>2. 使用32位JVM集群</h3><p>针对于64位JDK种种弊端，我们更多选择使用32位JDK集群来充分利用高性能机器的硬件资源。</p>
+<h4 id="如何实现？"><a href="#如何实现？" class="headerlink" title="如何实现？"></a>如何实现？</h4><p>在一台服务器上运行多个服务器程序，这些程序都运行在32位的JDK上。然后再运行个服务器作为反向代理服务器，由它来实现负载均衡。<br>由于32位JDK最多支持2G内存，因此每个虚拟结点的堆内存可以分配1.6G，一共运行10个虚拟结点的话，这台物理服务器可以拥有16G的堆内存。</p>
+<h4 id="有啥弊端？"><a href="#有啥弊端？" class="headerlink" title="有啥弊端？"></a>有啥弊端？</h4><ol>
+<li>多个虚拟节点竞争共享资源时容易出现问题<br>如多个虚拟节点共同竞争IO操作，很可能会引起IO异常。</li>
+<li>很难高效地使用资源池<br>如果每个虚拟节点使用各自的资源池，那么无法实现各个资源池的负载均衡。如果使用集中式资源池，那么又存在竞争的问题。</li>
+<li>每个虚拟节点最大内存为2G</li>
+</ol>
+<h2 id="别忘了直接内存也可能导致内存溢出！"><a href="#别忘了直接内存也可能导致内存溢出！" class="headerlink" title="别忘了直接内存也可能导致内存溢出！"></a>别忘了直接内存也可能导致内存溢出！</h2><h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>有个小型网站，使用32位JDK，堆1.6G。运行期间发现老是出现内存溢出。为了判断是否是堆内存溢出，在程序运行前添加参数：-XX:+HeapDumpOnOutOfMemeryError(添加这个参数后当堆内存溢出时就会输出异常日至)。但当再次发生内存溢出时，没有生成相关异常日志。从而可以判定，不是堆内存发生溢出。</p>
+<h3 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h3><p>我们可以发现，在32位JDK中，将1.6G分配给了堆，还有一部分分配给了JVM的其它内存，只有少于0.4G的内存为非JVM内存。我们知道，如果使用了NIO，那么JVM会在JVM内存之外分配内存空间，这部分内存也叫“直接内存”。因此，如果程序中使用了NIO，那么就要小心“直接内存”不足时发生内存溢出异常了！</p>
+<h3 id="直接内存的垃圾回收过程"><a href="#直接内存的垃圾回收过程" class="headerlink" title="直接内存的垃圾回收过程"></a>直接内存的垃圾回收过程</h3><p>直接内存虽然不是JVM内存空间，但它的垃圾回收也有JVM负责。直接内存的垃圾回收发生在Full GC时，只有当老年代内存满时，垃圾收集器才会顺便收集一下直接内存中的垃圾。<br>如果直接内存已满，但老年代没满，这时直接内存先是抛出异常，相应的catch块中调用System.gc()。由于System.gc()只是建议JVM回收，JVM可能不马上回收内存，那么这时直接内存就抛出内存溢出异常，使得程序终止。</p>
+<h2 id="JVM崩溃的原因"><a href="#JVM崩溃的原因" class="headerlink" title="JVM崩溃的原因"></a>JVM崩溃的原因</h2><p>当内存溢出时，JVM仅仅会终止当前运行的程序，那么什么时候JVM会崩溃呢？</p>
+<h3 id="什么是异步请求？"><a href="#什么是异步请求？" class="headerlink" title="什么是异步请求？"></a>什么是异步请求？</h3><p>我们知道，Web服务器和客户端采用HTTP通信，而HTTP底层采用TCP通信。异步通信就是当客户端向服务器发送一个HTTP请求后，将这个请求的TCP连接委托给其它线程，然后它转而做别的事，那条被委托的线程保持TCP连接，等待服务器的回信。当收到服务器回信后，再将收到的数据转交给刚才的线程。这个过程就是异步通信过程。</p>
+<h3 id="异步请求如何造成JVM崩溃？"><a href="#异步请求如何造成JVM崩溃？" class="headerlink" title="异步请求如何造成JVM崩溃？"></a>异步请求如何造成JVM崩溃？</h3><p>如果一个Web应用使用了较多的异步请求(AJAX)，每次主线程发送完请求后都将TCP连接交给一条新的线程去等待服务器回信，那么如果网络不流畅时，这些受委托的线程迟迟等不到服务器的回信，因此保持着TCP连接。当TCP连接过多时，超过JVM的承受能力，JVM就发生崩溃。</p>
+<h2 id="如何处理大对象？"><a href="#如何处理大对象？" class="headerlink" title="如何处理大对象？"></a>如何处理大对象？</h2><p>大对象对于JVM来说是个噩耗。如果对象过大，当前新生代的剩余空间装不下它，那么就需要使用分配担保机制，将当前新生代的对象都复制到老年代中，给大对象腾出空间。分配担保涉及到大量的复制，因此效率很低。</p>
+<p>那么，如果将大对象直接放入老年代，虽然避免了分配担保过程，但该对象只有当Full GC时才能被回收，而Full GC的代价是高昂的。如果大对象过多时，老年代很快就装满了，这时就需要进行Full GC，如果Full GC频率过高，程序就会变得很卡。</p>
+<p>因此，对于大对象，有如下几种处理方法：</p>
+<ol>
+<li>在写程序的时候尽量避免大对象<br>从源头降低大对象的出现，尽量选择空间利用率较高的数据结构存储。</li>
+<li>尽量缩短大对象的有效时间<br>对象用完后尽快让它失效，好让垃圾收集器尽快将他回收，避免因在新生代呆的时间过长而进入老年代。</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+      <div>
+            
+              
+            
+      </div>
+
+      <div>
+        <div id="wechat_subscriber" style="display: block; padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="/uploads/qrcode.jpg" alt="柴毛毛 wechat" style="width: 200px; max-width: 100%;"/>
+    <div>扫一扫订阅我的文章</div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>请我一杯咖啡</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/uploads/WechatIMG45.jpeg" alt="柴毛毛 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/uploads/WechatIMG46.jpeg" alt="柴毛毛 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    柴毛毛
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2016/04/24/jvm6/" title="深入理解JVM(六)——JVM性能调优实战">http://yoursite.com/2016/04/24/jvm6/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/04/20/jvm5/" rel="next" title="深入理解JVM(五)——HotSpot垃圾收集器">
+                <i class="fa fa-chevron-left"></i> 深入理解JVM(五)——HotSpot垃圾收集器
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/04/25/jvm7/" rel="prev" title="深入理解JVM(七)——Class文件结构">
+                深入理解JVM(七)——Class文件结构 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="柴毛毛" />
+            
+              <p class="site-author-name" itemprop="name">柴毛毛</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">26</span>
+                  <span class="site-state-item-name">文章</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.zhihu.com/people/chai-bo-zhou/" target="_blank" title="知乎">
+                      
+                        <i class="fa fa-fw fa-indent"></i>知乎</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="http://blog.csdn.net/u010425776" target="_blank" title="CSDN">
+                      
+                        <i class="fa fa-fw fa-rocket"></i>CSDN</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/bz51" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:chaibozhou@foxmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#如何在高性能服务器上进行JVM调优？"><span class="nav-number">1.</span> <span class="nav-text">如何在高性能服务器上进行JVM调优？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-采用64位操作系统，并为JVM分配大内存"><span class="nav-number">1.1.</span> <span class="nav-text">1. 采用64位操作系统，并为JVM分配大内存</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#注意：使用64位JDK的注意点"><span class="nav-number">1.1.1.</span> <span class="nav-text">注意：使用64位JDK的注意点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-使用32位JVM集群"><span class="nav-number">1.2.</span> <span class="nav-text">2. 使用32位JVM集群</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#如何实现？"><span class="nav-number">1.2.1.</span> <span class="nav-text">如何实现？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#有啥弊端？"><span class="nav-number">1.2.2.</span> <span class="nav-text">有啥弊端？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#别忘了直接内存也可能导致内存溢出！"><span class="nav-number">2.</span> <span class="nav-text">别忘了直接内存也可能导致内存溢出！</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问题描述"><span class="nav-number">2.1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问题分析"><span class="nav-number">2.2.</span> <span class="nav-text">问题分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#直接内存的垃圾回收过程"><span class="nav-number">2.3.</span> <span class="nav-text">直接内存的垃圾回收过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM崩溃的原因"><span class="nav-number">3.</span> <span class="nav-text">JVM崩溃的原因</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是异步请求？"><span class="nav-number">3.1.</span> <span class="nav-text">什么是异步请求？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#异步请求如何造成JVM崩溃？"><span class="nav-number">3.2.</span> <span class="nav-text">异步请求如何造成JVM崩溃？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何处理大对象？"><span class="nav-number">4.</span> <span class="nav-text">如何处理大对象？</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">柴毛毛</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">63.1k</span>
+  
+</div>
+
+
+  <div class="powered-by">
+    <i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+      本站访客数:<span id="busuanzi_value_site_uv"></span>
+    </span>
+  </div>
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
